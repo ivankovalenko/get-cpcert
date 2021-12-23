@@ -2,18 +2,17 @@
 
 function die() {
 echo ERROR: $*
-exit 1
 }
 
 function download() {
 mkdir -p libs
-wget -O libs/openssl.zip -c https://codeload.github.com/openssl/openssl/zip/OpenSSL_1_1_1-stable || die "download openssl"
-wget -O libs/gost-engine.zip -c https://codeload.github.com/gost-engine/engine/zip/1b374532c2d494710c39371e83c197d08c65e8bc || die "download gost-engine"
-wget -O libs/cmake-3.14.0.tar.gz -c https://github.com/Kitware/CMake/releases/download/v3.14.0/cmake-3.14.0.tar.gz || die "download cmake"
+curl -LJ -o libs/openssl.zip -C - https://codeload.github.com/openssl/openssl/zip/OpenSSL_1_1_1-stable || die "download openssl"
+curl -LJ -o libs/gost-engine.zip -C - https://codeload.github.com/gost-engine/engine/zip/1b374532c2d494710c39371e83c197d08c65e8bc || die "download gost-engine"
+curl -LJ -o libs/cmake-3.14.0.tar.gz -C - https://github.com/Kitware/CMake/releases/download/v3.14.0/cmake-3.14.0.tar.gz || die "download cmake"
 }
 
 function prereq() {
-sudo apt-get install make pkg-config autoconf build-essential
+sudo yum install -y make pkg-config autoconf build-essential unzip 
 }
 
 function unpack() {
@@ -38,8 +37,10 @@ cd libs/openssl-OpenSSL_1_1_1-stable
 ./config          || die "config openssl"
 make              || die "make openssl"
 sudo make install || die "install openssl"
-sudo ln -s /usr/local/lib/libssl.so.1.1 /lib/x86_64-linux-gnu/libssl.so.1.1       || die "ln libssl"
-sudo ln -s /usr/local/lib/libcrypto.so.1.1 /lib/x86_64-linux-gnu/libcrypto.so.1.1 || die "ln libcrypto"
+echo "/usr/local/lib64" > /etc/ld.so.conf.d/openssl.conf
+#sudo ln -s /usr/local/lib/libssl.so.1.1 /lib/x86_64-linux-gnu/libssl.so.1.1       || die "ln libssl"
+#sudo ln -s /usr/local/lib/libcrypto.so.1.1 /lib/x86_64-linux-gnu/libcrypto.so.1.1 || die "ln libcrypto"
+ldconfig
 cd ../..
 }
 

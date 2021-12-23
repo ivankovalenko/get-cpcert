@@ -24,4 +24,23 @@ get-cpcert folder.000 password > certificate.pem
 <pre>
 get-cpcert-bin.tar.gz -- contains prebuild binaries for ubuntu 14.04 64bit and 3 samples for testing
 </pre>
-  
+
+
+Convert CryptoPro to openssl
+
+1.
+mkdir hdimage
+
+1.a convert pfx to hdimage
+docker run --rm -ti -v $PWD:/mnt -w /mnt required/cryptopro /bin/bash
+ls *pfx *p12|while read p; do
+/opt/cprocsp/bin/amd64/certmgr -install -pfx -file ./$p -pin 12345678 -silent
+done;
+mkdir /mnt/hdimage
+cp /var/opt/cprocsp/keys/root/* /mnt/hdimage
+
+1.b 
+ls -ld *
+
+2. convert hdimage to pem
+ls /mnt/*|while read p; do get-cpcert   
